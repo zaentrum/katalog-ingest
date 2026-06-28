@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: katalog-ingest
+  namespace: stube
+  labels:
+    app: katalog-ingest
+    value-stream: stube
+    component: catalog
+    plane: scheduler
+spec:
+  # ADR-007: single replica is enough. Scheduling is decision-only;
+  # the actual work happens in the worker pods. HA optional later.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: katalog-ingest
+  template:
+    metadata:
+      labels:
+        app: katalog-ingest
+        value-stream: stube
+        component: catalog
+    spec:
+      serviceAccountName: katalog-ingest
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: katalog-ingest
+          image: zaentrum/katalog-ingest:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: KATALOG_INGEST_ADDR
+              value: ":8080"
+            # The Go katalog-api is read-only and lives next door.
+            - name: KATALOG_API_URL
+              value: "http://katalog-api.stube.svc.cluster.local"
+            # The CAP Java write-API the scheduler talks to for step
+            # status updates + WantedItems mutations.
+            - name: KATALOG_MANAGER_API_URL
+              value: "http://katalog-manager-api.stube.svc.cluster.local"
+            # Kafka bootstrap (cluster-internal). Use an external bootstrap
+            # endpoint only when connecting off-cluster.
+            - name: KAFKA_BROKERS
+              value: "platform-kafka-kafka-bootstrap.platform-event-streaming.svc:9093"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              # Scheduling + small Kafka producer footprint. The Go
+              # runtime keeps things tiny; 256 MiB is generous.
+              cpu: 500m
+              memory: 256Mi

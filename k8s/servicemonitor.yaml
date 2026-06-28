@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: katalog-ingest
+  namespace: stube
+  labels:
+    app: katalog-ingest
+spec:
+  selector:
+    matchLabels:
+      app: katalog-ingest
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
