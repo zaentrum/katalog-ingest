@@ -24,9 +24,9 @@ func main() {
 	slog.SetDefault(logger)
 
 	addr := envOr("KATALOG_INGEST_ADDR", ":8080")
-	kafkaBrokers := envOr("KAFKA_BROKERS", "platform-kafka-kafka-bootstrap.platform-event-streaming.svc:9093")
-	katalogAPIURL := envOr("KATALOG_API_URL", "http://katalog-api.stube.svc.cluster.local")
-	katalogMgrURL := envOr("KATALOG_MANAGER_API_URL", "http://katalog-manager-api.stube.svc.cluster.local")
+	kafkaBrokers := envOr("KAFKA_BROKERS", "kafka:9092")
+	katalogAPIURL := envOr("KATALOG_API_URL", "http://katalog-api")
+	katalogMgrURL := envOr("KATALOG_MANAGER_API_URL", "http://katalog-manager-api")
 	period := 30 * time.Second
 
 	slog.Info("starting katalog-ingest",

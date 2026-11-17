@@ -16,7 +16,7 @@ type ManagerClient struct {
 }
 
 // NewManagerClient returns a client pointing at base (e.g.
-// http://katalog-manager-api.stube.svc.cluster.local).
+// http://katalog-manager-api).
 func NewManagerClient(base string) *ManagerClient {
 	return &ManagerClient{
 		base: base,

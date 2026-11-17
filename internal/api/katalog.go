@@ -18,7 +18,7 @@ type KatalogClient struct {
 }
 
 // NewKatalogClient returns a client pointing at base (e.g.
-// http://katalog-api.stube.svc.cluster.local).
+// http://katalog-api).
 func NewKatalogClient(base string) *KatalogClient {
 	return &KatalogClient{
 		base: base,

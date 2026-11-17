@@ -2,10 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: katalog-ingest
-  namespace: stube
   labels:
     app: katalog-ingest
-    value-stream: stube
     component: catalog
     plane: scheduler
 spec:
@@ -21,7 +19,6 @@ spec:
     metadata:
       labels:
         app: katalog-ingest
-        value-stream: stube
         component: catalog
     spec:
       serviceAccountName: katalog-ingest
@@ -41,15 +38,15 @@ spec:
               value: ":8080"
             # The Go katalog-api is read-only and lives next door.
             - name: KATALOG_API_URL
-              value: "http://katalog-api.stube.svc.cluster.local"
+              value: "http://katalog-api"
             # The CAP Java write-API the scheduler talks to for step
             # status updates + WantedItems mutations.
             - name: KATALOG_MANAGER_API_URL
-              value: "http://katalog-manager-api.stube.svc.cluster.local"
+              value: "http://katalog-manager-api"
             # Kafka bootstrap (cluster-internal). Use an external bootstrap
             # endpoint only when connecting off-cluster.
             - name: KAFKA_BROKERS
-              value: "platform-kafka-kafka-bootstrap.platform-event-streaming.svc:9093"
+              value: "kafka:9092"
           readinessProbe:
             httpGet:
               path: /healthz

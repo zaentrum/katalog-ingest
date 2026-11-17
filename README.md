@@ -39,9 +39,12 @@ Configuration is env-driven:
 | Env | Default |
 | --- | --- |
 | `KATALOG_INGEST_ADDR` | `:8080` |
-| `KAFKA_BROKERS` | the platform event-streaming cluster |
-| `KATALOG_API_URL` | `http://katalog-api.stube.svc.cluster.local` |
-| `KATALOG_MANAGER_API_URL` | `http://katalog-manager-api.stube.svc.cluster.local` |
+| `KAFKA_BROKERS` | `kafka:9092` |
+| `KATALOG_API_URL` | `http://katalog-api` |
+| `KATALOG_MANAGER_API_URL` | `http://katalog-manager-api` |
+
+The defaults are the names the platform's chart gives the broker and the two
+services, and the chart sets all four. Run elsewhere, set them to yours.
 
 ## Build the container
 
